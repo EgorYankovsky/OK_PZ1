@@ -36,23 +36,21 @@ namespace PZ1
 
 		public static void simpleChange(string a, string b)
 		{
-			StreamReader sr = new StreamReader("C:\\Users\\salyaev.2020\\Desktop\\input.txt");
+			// А: C:\\Users\\salyaev.2020\\Desktop\\input.txt
+			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\input.txt
+			StreamReader sr = new StreamReader("C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\input.txt");
 			string line = sr.ReadLine();
 			while (line != null)
 			{
 				foreach (char litera in line)
 				{
-					char j;
 					if (litera >= 'А' && litera <= 'Я')
-					{
-						j = Char.ToLower(litera);
-						find(j, a, b);
-					}
+						find(Char.ToLower(litera), a, b);
+
 					if (litera >= 'а' && litera <= 'я')
-					{
-						j = litera;
-						find(j, a, b);
-					}
+						find(litera, a, b);
+					//j = Char.ToLower(litera);
+					//find(j, a, b);
 				}
 				Console.Write('\n');
 				line = sr.ReadLine();
