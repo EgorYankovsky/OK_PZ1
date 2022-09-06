@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace PZ1
 {
@@ -19,52 +20,85 @@ namespace PZ1
 			return new string(elems);
 		}
 
-		public static void find(char n, string m, string v)
+		public static char find(char littera, string alph, string key)
 		{
 			char elem;
 			int i = 0;
-			if (n != '\n' && n != '\r')
-			{
-				while (n != m[i])
-				{
-					i++;
-				}
-				elem = v[i];
-				Console.Write(elem);
-			}
+
+			while (littera != alph[i])
+				i++;
+			elem = key[i];
+
+			return elem;
 		}
 
-		public static void simpleChange(string a, string b)
+		public static void simpleChange(string alph, string key, string inTitle, string outTitle)
 		{
-			// А: C:\\Users\\salyaev.2020\\Desktop\\input.txt
-			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\input.txt
-			StreamReader sr = new StreamReader("C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\input.txt");
-			string line = sr.ReadLine();
-			while (line != null)
+			// А: C:\\Users\\salyaev.2020\\Desktop\\
+			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\
+			try
 			{
-				foreach (char litera in line)
-				{
-					if (litera >= 'А' && litera <= 'Я')
-						find(Char.ToLower(litera), a, b);
+				StreamReader sr = new StreamReader($"C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\{inTitle}.txt");
+				string line = sr.ReadToEnd();
+				sr.Close();
+				char[] elems = line.ToCharArray();     // Achtung! Не самое мудрое решение
+				List<char> outElems = new List<char>();
 
-					if (litera >= 'а' && litera <= 'я')
-						find(litera, a, b);
-					//j = Char.ToLower(litera);
-					//find(j, a, b);
+				foreach (char litera in elems)
+				{
+					if (System.Text.RegularExpressions.Regex.IsMatch(Convert.ToString(litera), @"\p{IsCyrillic}"))
+						outElems.Add(find(Char.ToLower(litera), alph, key));
 				}
-				Console.Write('\n');
-				line = sr.ReadLine();
+
+				StreamWriter sw = new StreamWriter($"C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\{outTitle}.txt");
+				foreach (char elem in outElems)
+					sw.Write(elem);
+				sw.Close();
 			}
-			sr.Close();
+			catch (Exception e)
+			{
+				Console.WriteLine($"Exception: {e}");
+			}
 		}
 	}
-	class Program
+	public class Program
 	{
 		static void Main(string[] args)
 		{
-			string alph = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-			Console.WriteLine(TSK1.shuffleFY(alph));
-			TSK1.simpleChange(alph, TSK1.shuffleFY(alph));
+			string alph = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
+				key, key1, key2, 
+				inputTitle0 = "inputDefText", outputTitle0 = "outputDefText",
+				inputTitle1 = "inputEssay", outputTitle1 = "outputEssay",
+				inputTitle2 = "inputHugeText", outputTitle2 = "outputHugeText";
+
+
+			// Task № 1.1
+			// А: C:\\Users\\salyaev.2020\\Desktop\\
+			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\
+			StreamWriter sw = new StreamWriter("C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\key.txt");
+			sw.WriteLine(TSK1.shuffleFY(alph));
+			Console.WriteLine($"Ключ сгенерирован в файл key.txt");
+			sw.Close();
+			Console.WriteLine("Task1 passed");
+
+
+
+			// Task № 1.2
+			// А: C:\\Users\\salyaev.2020\\Desktop\\
+			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\
+			StreamReader sr = new StreamReader("C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\key.txt");
+			key = sr.ReadLine();
+			sr.Close();
+			TSK1.simpleChange(alph, key, inputTitle0, outputTitle0);
+			Console.WriteLine("Task2 passed");
+
+
+			// Task № 1.3
+			key1 = TSK1.shuffleFY(alph);
+			key2 = TSK1.shuffleFY(alph);
+			TSK1.simpleChange(alph, key1, inputTitle1, outputTitle1);
+			TSK1.simpleChange(alph, key2, inputTitle2, outputTitle2);
+			Console.WriteLine("Task3 passed");
 		}
 	}
 }
