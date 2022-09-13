@@ -6,7 +6,26 @@ namespace PZ1
 {
 	public class TSK1
 	{
-		public static string shuffleFY(string str)
+		private static Dictionary<char, char> KVP = new Dictionary<char, char>();
+
+		public static void clearDict() => KVP.Clear();
+
+		public static void generateKey(char[] keys, char[] values)
+		{
+			if (keys.Length == values.Length)
+			{
+				for (int i = 0; i < keys.Length; i++)
+				{
+					KVP.Add(keys[i], values[i]);
+				}
+			}
+			else
+			{
+				Console.WriteLine("Keys and Values have different sizes");
+			}
+		}
+
+		public static char[] shuffleFY(string str)
 		{
 			char[] elems = str.ToCharArray();
 			Random rnd = new Random();
@@ -17,16 +36,14 @@ namespace PZ1
 				elems[j] = elems[i];
 				elems[i] = elem;
 			}
-			return new string(elems);
+			return elems;
 		}
 
-		public static void simpleChange(Dictionary<char, char> KVP, string inTitle, string outTitle)
+		public static void simpleChange(string inTitle, string outTitle)
 		{
-			// А: C:\\Users\\salyaev.2020\\Desktop\\
-			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\
 			try
 			{
-				StreamReader sr = new StreamReader($"C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\{inTitle}.txt");
+				StreamReader sr = new StreamReader($"{inTitle}.txt");
 				string line = sr.ReadToEnd().ToLower();
 				sr.Close();
 
@@ -44,7 +61,7 @@ namespace PZ1
 					}
 				}
 
-				StreamWriter sw = new StreamWriter($"C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\{outTitle}.txt");
+				StreamWriter sw = new StreamWriter($"{outTitle}.txt");
 				foreach (char elem in outElems)
 					sw.Write(elem);
 				sw.Close();
@@ -59,66 +76,39 @@ namespace PZ1
 	{
 		static void Main(string[] args)
 		{
-			Dictionary<char, char> keyValuePairs = new Dictionary<char, char>();
-			string alph = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя",
-				key, key1, key2, 
+			string alph = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя", value,
 				inputTitle0 = "inputDefText", outputTitle0 = "outputDefText",
 				inputTitle1 = "inputEssay", outputTitle1 = "outputEssay",
 				inputTitle2 = "inputHugeText", outputTitle2 = "outputHugeText";
 
 
 			// Task № 1.1
-			// А: C:\\Users\\salyaev.2020\\Desktop\\texts\\
-			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\
-			StreamWriter sw = new StreamWriter("C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\key.txt");
-			string formedKey = TSK1.shuffleFY(alph);
-			sw.WriteLine(formedKey);
+			StreamWriter sw = new StreamWriter("key.txt");
+			sw.WriteLine(new string(TSK1.shuffleFY(alph)));
 			Console.WriteLine($"Ключ записан в файл key.txt");
 			sw.Close();
-
-
 			Console.WriteLine("Task1 passed");
 
 
 
 			// Task № 1.2
-			// А: C:\\Users\\salyaev.2020\\Desktop\\texts\\
-			// Е: C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\
-			StreamReader sr = new StreamReader("C:\\Users\\Админ\\Desktop\\Учебное\\Основы криптографии\\Code\\PZ1\\texts\\key.txt");
-			key = sr.ReadLine();
-
-			int i = 0;
-			foreach (char litera in alph)
-			{
-				keyValuePairs.Add(litera, key[i]);
-				i++;
-			}
+			StreamReader sr = new StreamReader("key.txt");
+			value = sr.ReadLine();
 			sr.Close();
-
-			TSK1.simpleChange(keyValuePairs, inputTitle0, outputTitle0);
-			keyValuePairs.Clear();
+			TSK1.generateKey(alph.ToCharArray(), value.ToCharArray());
+			TSK1.simpleChange(inputTitle0, outputTitle0);
+			TSK1.clearDict();
 			Console.WriteLine("Task2 passed");
 
 
 			//// Task № 1.3
-			key1 = TSK1.shuffleFY(alph);
-			i = 0;
-			foreach (char litera in alph)
-			{
-				keyValuePairs.Add(litera, key1[i]);
-				i++;
-			}
-			TSK1.simpleChange(keyValuePairs, inputTitle1, outputTitle1);
-			keyValuePairs.Clear();
-			key2 = TSK1.shuffleFY(alph);
-			i = 0;
-			foreach (char litera in alph)
-			{
-				keyValuePairs.Add(litera, key2[i]);
-				i++;
-			}
-			TSK1.simpleChange(keyValuePairs, inputTitle2, outputTitle2);
-			keyValuePairs.Clear();
+			TSK1.generateKey(alph.ToCharArray(), TSK1.shuffleFY(alph));
+			TSK1.simpleChange(inputTitle1, outputTitle1);
+			TSK1.clearDict();
+
+			TSK1.generateKey(alph.ToCharArray(), TSK1.shuffleFY(alph));
+			TSK1.simpleChange(inputTitle2, outputTitle2);
+			TSK1.clearDict();
 			Console.WriteLine("Task3 passed");
 		}
 	}
